@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>★★★ 登录页面 ★★★</title>
+<script type="text/javascript" src="../js/inspiniaCommon.js"></script>
+</head>
+<body class="gray-bg">
+	<div class="middle-box text-center loginscreen animated fadeInDown">
+        <div>
+            <div>
+                <h1 class="logo-name">LIVE</h1>
+            </div>
+            
+            <h3>欢迎来到新的世界</h3>
+            <p>动用你的手指，开启新的征程
+            </p>
+            
+            <div class="form-group">
+                <input id="userName" type="text" class="form-control" placeholder="Username" required>
+            </div>
+            <div class="form-group">
+                <input id="password" type="password" class="form-control" placeholder="Password" required>
+            </div>
+            <button class="btn btn-primary block full-width " onclick="on_login()">登录</button>
+
+            <a href="login.html#"><small>忘记密码?</small></a>
+            <p class="text-muted text-center"><small>没有找到开启新世界的大门?-----↓↓↓↓↓↓</small></p>
+            
+            <a class="btn btn-sm btn-white btn-block" href="register.html">开启你的世界</a>
+            
+            <p class="m-t"> <small>无论什么时候，无论什么心情，不忘初心  &copy; 2018</small> </p>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+	
+	function on_login(){
+		var v_userName = document.getElementById("userName").value;
+		var v_password = document.getElementById("password").value;
+		if(isEmpty(v_userName) || isEmpty(v_password)){
+			$.Pop('请填写完整！','alert',function(){alert('你是不是傻?')});
+			return;
+		}
+		$.ajax({
+			url: '/live/doLogin',
+			type: 'POST',
+			data: {
+				userName : v_userName,
+				password : v_password
+			},
+			dataType: 'json',
+			success: function(resp){
+				var status = resp.status;
+				if(status == '00'){
+					window.localStorage.setItem('userId',v_userName);
+					//返回列表页面
+					window.location.href = basePath + "resources/html/index.html";
+				}else{
+					$.Pop('用户名或密码错误，不能登录！','alert',function(){});
+				}
+			},
+			error: function(a, b, c){
+				alert(JSON.parse(a)+"--"+b+"--"+c);
+			}
+		})
+	}
+</script>
+</html>

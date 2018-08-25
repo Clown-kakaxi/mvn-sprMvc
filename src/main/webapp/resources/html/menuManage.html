@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>★★★ 菜单管理页面 ★★★</title>
+<script type="text/javascript" src="../js/inspiniaCommon.js"></script>
+<style>
+    /* Additional style to fix warning dialog position */
+    #alertmod_table_list_2{
+        top: 900px !important;
+    }
+</style>
+</head>
+
+<body>
+
+    <div id="wrapper">
+        <div class="gray-bg">
+	        <div class="wrapper wrapper-content  animated fadeInRight">
+	        	<div class="ibox-content m-b-sm border-bottom">
+	        		<form id="sch_menuForm">
+	                <div class="row">
+	                    <div class="col-sm-4">
+	                        <div class="form-group">
+	                            <label class="control-label">菜单名称</label>
+	                            <input type="text" id="sch_menuName" value="" placeholder="菜单名称" class="form-control">
+	                        </div>
+	                    </div>
+	                    <div class="col-sm-2">
+	                        <div class="form-group">
+	                            <label class="control-label">菜单等级</label>
+	                            <input type="text" id="sch_menuLevel" value="" placeholder="菜单等级" class="form-control">
+	                        </div>
+	                    </div>
+	                    <!-- <div class="col-sm-2">
+	                        <div class="form-group">
+	                            <label class="control-label" for="quantity">Quantity</label>
+	                            <input type="text" id="quantity" name="quantity" value="" placeholder="Quantity" class="form-control">
+	                        </div>
+	                    </div> -->
+	                    <div class="col-sm-4">
+	                        <div class="form-group">
+	                        	<label class="control-label">是否叶子节点</label>
+	                            <select id="sch_leafFlag" class="form-control">
+	                            	<option value="none"></option>
+	                                <option value="1">是</option>
+	                                <option value="0">否</option>
+	                            </select>
+	                        </div>
+	                    </div>
+	                </div>
+	               	
+	               	<!-- <div class="row">
+	               		<div class="col-sm-6">
+	               			<div class="">
+				                <label class="font-noraml">single select</label>
+				                <div class="input-group">
+				                <select data-placeholder="Choose a Country..." class="chosen-select" style="width:150px;" tabindex="2">
+				                <option value="">Select</option>
+				                <option value="United States">United States</option>
+				                <option value="Afghanistan">Afghanistan</option>
+				                <option value="Albania">Albania</option>
+				                <option value="Bermuda">Bermuda</option>
+				                <option value="Zimbabwe">Zimbabwe</option>
+				                </select>
+				                </div>
+			                </div>
+	               		</div>
+	               	</div> -->
+	               
+	               
+					<div class="row">
+						<div class="pull-right tooltip-demo">
+							<button class="btn btn-success " type="button" onclick="do_searchTreeMenu()"><i class="fa fa-search"></i>&nbsp;查询</button>
+							<button class="btn btn-white " type="button" onclick="resetForm('sch_menuForm')"><i class="fa fa-times"></i>&nbsp;重置</button>
+							<!-- <button class="btn btn-white " type="button" onclick="do_reset()"><i class="fa fa-times"></i>&nbsp;重置</button> -->
+		                    <!-- <a href="mailbox.html" class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="top" title="Discard email"><i class="fa fa-times"></i>&nbsp;重&nbsp;置&nbsp;</a> -->
+		                </div>
+	                </div>
+	                </form>
+	            </div>
+	            <div class="row">
+	                <div class="col-lg-12">
+	                    <div class="ibox ">
+	                        <div class="ibox-title">
+	                            <h5>模块 — — 菜单管理</h5>
+	                        </div>
+	                        
+	                        <div class="ibox-content">
+	                        	<!--<ul class="tag-list" style="padding: 0">
+	                                <li><a href="mail_compose.html"><i class="fa fa-tag"></i> Family</a></li>
+	                                <li><a href="mail_compose.html"><i class="fa fa-tag"></i> Work</a></li>
+	                                <li><a href="mail_compose.html"><i class="fa fa-tag"></i> Home</a></li>
+	                                <li><a href="mail_compose.html"><i class="fa fa-tag"></i> Children</a></li>
+	                                <li><a href="mail_compose.html"><i class="fa fa-tag"></i> Holidays</a></li>
+	                                <li><a href="mail_compose.html"><i class="fa fa-tag"></i> Music</a></li>
+	                                <li><a href="mail_compose.html"><i class="fa fa-tag"></i> Photography</a></li>
+	                                <li><a href="mail_compose.html"><i class="fa fa-tag"></i> Film</a></li>
+	                            </ul>-->
+	
+								<p>
+									<button class="btn btn-success " type="button" data-toggle="modal" data-target="#MenuFormModal" data-backdrop="false" onclick="initNewData()"><i class="fa fa-plus"></i>&nbsp;<span class="bold">新增</span></button>
+			                        <button class="btn btn-info " type="button" data-toggle="modal" data-target="#MenuFormModal" onclick="initEditData()"><i class="fa fa-edit"></i>&nbsp;修改</button>
+			                        <button class="btn btn-danger " type="button" onclick="on_delMenu()"><i class="fa fa-times"></i>&nbsp;删除</button>
+			                        <button class="btn btn-warning " type="button"><i class="fa fa-upload"></i>&nbsp;导出</button>
+			                        <!--<button class="btn btn-default " type="button"><i class="fa fa-map-marker"></i>&nbsp;&nbsp;Map</button>
+			
+			                        <a class="btn btn-success btn-facebook">
+			                            <i class="fa fa-facebook"> </i> Sign in with Facebook
+			                        </a>
+			                        <a class="btn btn-success btn-facebook btn-outline">
+			                            <i class="fa fa-facebook"> </i> Sign in with Facebook
+			                        </a>
+			                        <a class="btn btn-white btn-bitbucket">
+			                            <i class="fa fa-user-md">&nbsp;&nbsp;你好</i>
+			                        </a>
+			                        <a class="btn btn-white btn-bitbucket">
+			                            <i class="fa fa-group"></i>
+			                        </a>
+			                        <a class="btn btn-white btn-bitbucket">
+			                            <i class="fa fa-wrench"></i>
+			                        </a>
+			                        <a class="btn btn-white btn-bitbucket">
+			                            <i class="fa fa-exchange"></i>
+			                        </a>
+			                        <a class="btn btn-white btn-bitbucket">
+			                            <i class="fa fa-check-circle-o"></i>
+			                        </a>
+			                        <a class="btn btn-white btn-bitbucket">
+			                            <i class="fa fa-road"></i>
+			                        </a>
+			                        <a class="btn btn-white btn-bitbucket">
+			                            <i class="fa fa-ambulance"></i>
+			                        </a>
+			                        <a class="btn btn-white btn-bitbucket">
+			                            <i class="fa fa-star"></i> Stared
+			                        </a>-->
+			                        <div class="modal inmodal" id="MenuFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+		                                <div class="modal-dialog">
+		                                	<div class="modal-content animated bounceInRight">
+		                                        <div class="modal-header">
+		                                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		                                            <!-- <i class="fa fa-th-large modal-icon"></i> -->
+		                                            <h4 class="modal-title" id="modalTitle"></h4>
+		                                            <small class="font-bold"></small>
+		                                        </div>
+		                                        <div class="modal-body">
+		                                            <form role="form" id="menuForm">
+		                                            	<div class="row">
+		                                            		<div class="col-sm-6">
+		                                            			<div style="display:none;"><label>主键Id</label><input id="menuId" type="text" class="form-control"></div>
+		                                            			<div class="form-group"><label>菜单名称<i style="color:red">*</i></label> <input id="menuName" type="text" placeholder="请输入..." class="form-control" name="max" required></div>
+		                                            		</div>
+		                                            		<div class="col-sm-6">
+		                                            			<div class="form-group"><label>链接地址<i style="color:red">*</i></label> <input id="menuUrl" type="text" placeholder="请输入..." class="form-control" name="url"></div>
+		                                            		</div>
+		                                            	</div>
+					                                    <div class="row">
+		                                            		<div class="col-sm-6">
+		                                            			<div class="form-group"><label>菜单等级<i style="color:red">*</i></label> <input id="menuLevel" type="text" placeholder="请输入..." class="form-control" name="number1"></div>
+		                                            		</div>
+		                                            		<div class="col-sm-6">
+		                                            			<div class="form-group"><label>排序<i style="color:red">*</i></label> <input id="menuOrder" type="text" placeholder="请输入..." class="form-control" name="number2"></div>
+		                                            		</div>
+		                                            	</div>
+		                                            	<div class="row">
+		                                            		<div class="col-sm-6">
+		                                            			<div class="form-group"><label>父节点ID<i style="color:red">*</i></label> <input id="menuParId" type="text" placeholder="请输入..." class="form-control" name="number3"></div>
+		                                            		</div>
+		                                            		<div class="col-sm-6">
+		                                            			<div class="form-group"><label>图标</label> <input id="menuIcon" type="text" placeholder="请输入..." class="form-control" name="str"></div>
+		                                            		</div>
+		                                            	</div>
+		                                            	<div class="row">
+		                                            		<div class="col-sm-6">
+		                                            			<div class="form-group">
+		                                            				<label>是否叶子节点<i style="color:red">*</i></label>
+		                                            				<select id="isLeaf" class="form-control m-b" name="select" requried>
+								                                        <option value="1">是</option>
+								                                        <option value="0">否</option>
+								                                    </select>
+		                                            			</div>
+		                                            		</div>
+		                                            		<div class="col-sm-6">
+		                                            		
+		                                            			<div class="form-group"><label>菜单类型</label>
+		                                            				<select id="menuType" name="status" id="status" class="form-control">
+										                                <option value="10" selected>系统功能类</option>
+										                                <option value="20">业务使用类</option>
+										                            </select>
+		                                            			</div>
+		                                            		</div>
+		                                            	</div>
+		                                            	<div class="row">
+		                                            		<div class="col-sm-12">
+		                                            			<div class="form-group"><label>备注</label>
+		                                            				<textarea id="menuTip" rows="3" cols="70" name="tip" placeholder="请输入...">
+																	</textarea>
+		                                            			</div>
+		                                            		</div>
+		                                            	</div>
+		                                            	<!-- <hr> -->
+					                                    <div style="text-align: center;">
+					                                    	<button type="button" class="btn btn-primary m-t-n-xs" data-dismiss="modal" onclick="on_saveMenu()"><strong>保存</strong></button>
+					                                    	<!-- <button class="btn btn-sm btn-primary m-t-n-xs" onclick="on_saveMenu()"><strong>保存</strong></button> -->
+					                                        <!-- <button class="ladda-button btn btn-sm btn-primary m-t-n-xs" data-style="zoom-in" type="submit"><strong>Submit</strong></button> -->
+					                                    </div>
+					                                </form>
+		                                        </div>
+		                                       <!-- <div class="modal-footer">
+		                                            <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+		                                            <button type="button" class="btn btn-primary">Save changes</button>
+		                                        </div>-->
+		                                    </div>
+		                                </div>
+		                            </div>
+			                    </p>
+								<!--<div class="mail-body text-right tooltip-demo">
+			                        <a href="mailbox.html" class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title="Send"><i class="fa fa-reply"></i> Send</a>
+			                        <a href="mailbox.html" class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="top" title="Discard email"><i class="fa fa-times"></i> Discard</a>
+			                        <a href="mailbox.html" class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="top" title="Move to draft folder"><i class="fa fa-pencil"></i> Draft</a>
+			                        <button class="ladda-button btn btn-warning" data-style="zoom-in">Submit</button>
+			                    </div>-->
+	                            <div class="jqGrid_wrapper">
+	                                <table id="table_list_2"></table>
+	                                <div id="pager_list_2"></div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+
+        </div>
+    </div>
+
+
+
+
+    <script>
+    	
+    	
+    	var selId;//被选中的行号ID 
+    	var gridHeight;
+        $(document).ready(function () {
+        	validForm();
+        	
+        	var l = $('.ladda-button').ladda();
+	        l.click(function(){
+	            l.ladda('start');
+	            setTimeout(function(){
+	                l.ladda('stop');
+	            },800)
+	        });
+//      	$('.ladda-button').ladda('bind', {timeout: 200} );
+        	var windowHeight = document.body.clientHeight;
+        	gridHeight = windowHeight-260;
+        	initTreeGridData();
+
+            // Add selection
+            /*$("#table_list_2").setSelection(4, true);
+
+
+            // Setup buttons
+             $("#table_list_2").jqGrid('navGrid', '#pager_list_2',
+                    {edit: true, add: true, del: true, search: true},
+                    {height: 200, reloadAfterSubmit: true}
+            ); */
+
+            // 将jqgrid 宽度设置为 可以伸缩
+            $(window).bind('resize', function () {
+                var width = $('.jqGrid_wrapper').width();
+                $('#table_list_2').setGridWidth(width);
+            });
+        });
+
+        
+        function initTreeGridData(){
+        	$("#table_list_2").jqGrid({
+        	   	url:'/menu/getAllTreeMenu',
+        	   	postData:{'menuId':'1111','type':'2222'},
+        		mtype : "POST",
+        		contentType : "application/json",
+        		datatype: 'json',
+        		autowidth: true,
+        		shrinkToFit: true,
+        		rownumbers: true, //是否显示序号列 true显示，false不显示
+        		colNames:['主键ID', '菜单名称', '链接地址', '菜单等级', '排序', '父节点ID','是否叶子节点','标注','菜单类型'],
+                colModel:[
+                    {name:'id',index:'id', editable: true, width:60, sorttype:"int",search:true},
+                    {name:'name',index:'name', editable: true, width:90, sorttype:"string"},
+                    {name:'mocFuncId',index:'mocFuncId', editable: true, width:100},
+                    {name:'treeLevel',index:'treeLevel', editable: true, width:80,align:"right",sorttype:"float"},
+                    {name:'order_',index:'order_', editable: true, width:80, align:"right",sorttype:"string"},
+                    {name:'parentId',index:'parentId', editable: true, width:80, align:"right",sorttype:"float"},
+                    {name:'leafFlag',index:'leafFlag', hidden:true},
+                    {name:'tip',index:'tip', hidden:true},
+                    {name:'type',index:'type', hidden:true},
+                   // {name:'note',index:'note', editable: true, width:100, sortable:false}
+                ],
+        	   	rowNum:10,
+        	   	rowList:[10,20,100],
+        	   	pager: '#pager_list_2',
+        	   	//sortname: 'id',
+        	    viewrecords: true,
+        	    sortorder: "desc",
+        	    hidegrid: true,
+        	    caption:"菜单列表",
+        	    /* multiselect: true,
+        	    multiboxonly:true,
+        	    beforeSelectRow: function(){
+        	    	$("#table_list_2").jqGrid('resetSelection');
+        		    return(true);
+        	    }, */
+        		onSelectRow : function(rowid,
+        				status) {
+        			selId = rowid;
+        			
+        		}
+        	});
+        	
+        	$("#table_list_2").jqGrid('navGrid','#pager_list_2',{edit:false,add:false,del:false,search:false, reloadAfterSubmit:true});
+        	$('#table_list_2').setGridHeight('320');
+        	$('#table_list_2').jqGrid('setLabel','rn', '序号', {'text-align':'left','color':'blue'},'');
+        }
+        
+        /**
+         * 新增按钮
+         */
+        function on_addMenu(){
+        	alert(231);
+        }
+        
+        /**
+         * 初始化 新增数据值
+         */
+        function initNewData(){
+        	$("#modalTitle")[0].innerText = '新增菜单';
+        }
+        
+        /**
+         * 初始化 修改数据值
+         */
+        function initEditData(){
+        	$("#modalTitle")[0].innerText = '修改菜单';
+        	//$.Pop("请选择至少一条数据！", 'confirm', function(){});
+        	var rowid = $("#table_list_2").jqGrid("getGridParam","selrow");
+        	if(!isEmpty(rowid)){
+        		//debugger;
+        		var rowData = $("#table_list_2").jqGrid('getRowData',rowid);//获取该行数据
+        		$("#menuId").val(rowData.id);
+        		$("#menuName").val(rowData.name);
+            	$("#menuUrl").val(rowData.mocFuncId);
+            	$("#menuLevel").val(rowData.treeLevel);
+            	$("#menuOrder").val(rowData.order_);
+            	$("#menuParId").val(rowData.parentId);
+            	$("#menuIcon").val(rowData.name);
+            	var options1=$("#isLeaf option:selected"); //获取选中的项
+            	options1.val(rowData.leafFlag);//拿到选中项的值
+            	var options2=$("#menuType option:selected"); //获取选中的项
+            	options2.val(rowData.type);//拿到选中项的值
+            	$("#menuTip").val(rowData.tip);
+        	}else{
+        		$.Pop("请选择至少一条数据！", 'alert', function(){});
+        		return;
+        	}
+        }
+        
+        /**
+         * 删除按钮
+         */
+        function on_delMenu(){
+        	var rowid = $("#table_list_2").jqGrid("getGridParam","selrow");
+        	if(!isEmpty(rowid)){
+        		$.Pop('确认删除吗？','confirm',function(){
+        			$.ajax({
+        				url: '/menu/deleteMenu',
+        				type: 'POST',
+        				data: {
+        					id : rowid,
+        				},
+        				dataType: 'json',
+        				success: function(resp){
+        					var status = resp.status;
+        					if(status == '00'){
+        						toastr.success('删除成功!', '提示！');
+        						reloadGridData('table_list_2');
+        					}else{
+        						var message = resp.message;
+        						$.Pop(message, 'alert', function(){});
+        					}
+        				},
+        				error: function(a, b, c){
+        					alert(a+"--"+b+"--"+c);
+        				}
+        			});
+        		});
+        	}else{
+        		$.Pop("请选择至少一条数据！", 'alert', function(){});
+        		return;
+        	}
+        }
+        
+        /**
+         * 验证form表单
+         */
+        function validForm(){
+        	$("#menuForm").validate({
+                rules: {
+                    password: {
+                        required: true,
+                        minlength: 3
+                    },
+                    url: {
+                        required: true,
+                        url: true
+                    },
+                    number1: {
+                        required: true,
+                        number: true
+                    },
+                    number2: {
+                        required: true,
+                        number: true
+                    },
+                    number3: {
+                        required: true,
+                        number: true
+                    },
+                    min: {
+                        required: true,
+                        minlength: 3
+                    },
+                    max: {
+                        required: true,
+                        maxlength: 6
+                    }
+                    /* select: {
+                    	required: true,
+                    } */
+                }
+            });
+        }
+        
+        /**
+         * 保存菜单
+         */
+        function on_saveMenu(){
+        	var v_id = $("#menuId").val();
+        	if(isEmpty(v_id)){
+        		v_id = '0';
+        	}
+        	var v_menuName = $("#menuName").val();
+        	var v_menuUrl= $("#menuUrl").val();
+        	var v_menuLevel = $("#menuLevel").val();
+        	var v_menuOrder = $("#menuOrder").val();
+        	var v_menuParId = $("#menuParId").val();
+        	var v_menuIcon = $("#menuIcon").val();
+        	var options1=$("#isLeaf option:selected"); //获取选中的项
+        	var v_isLeaf = options1.val();//拿到选中项的值
+        	var v_isLeaf_text = options1.text();//拿到选中项的文本
+        	var options2=$("#menuType option:selected"); //获取选中的项
+        	var v_menuType = options2.val();//拿到选中项的值
+        	var v_menuType_text = options2.text();//拿到选中项的文本
+        	var v_menuTip = $("#menuTip").val();
+        	$.ajax({
+				url: '/menu/saveMenu',
+				type: 'POST',
+				data: {
+					Id : v_id,
+					name : v_menuName,
+					mocFuncId : v_menuUrl,
+					treeLevel : v_menuLevel,
+					order_ : v_menuOrder,
+					parentId : v_menuParId,
+					icon : v_menuIcon,
+					leafFlag : v_isLeaf,
+					type : v_menuType,
+					tip : v_menuTip,
+				},
+				dataType: 'json',
+				success: function(resp){
+					var status = resp.status;
+					if(status == '00'){
+						toastr.success('保存成功22!', '提示！');
+						$.Pop("保存成功111", 'alert', function(){});
+						reloadGridData('table_list_2');
+					}else{
+						var message = resp.message;
+						$.Pop(message, 'alert', function(){});
+					}
+				},
+				error: function(a, b, c){
+					alert(a+"--"+b+"--"+c);
+				}
+			});
+        }
+        
+        //选择下拉框
+        var config = {
+            '.chosen-select'           : {},
+            '.chosen-select-deselect'  : {allow_single_deselect:true},
+            '.chosen-select-no-single' : {disable_search_threshold:10},
+            '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+            '.chosen-select-width'     : {width:"95%"}
+        }
+        for (var selector in config) {
+            $(selector).chosen(config[selector]);
+        }
+        
+        //条件搜索功能
+        function do_searchTreeMenu(){
+        	var sch_menuName = $('#sch_menuName').val();
+        	var sch_menuLevel = $('#sch_menuLevel').val();
+        	var sch_leafFlag = $('#sch_leafFlag option:selected').val();
+        	var postData = {
+       			name : sch_menuName,
+           		treeLevel : sch_menuLevel,
+           		leafFlag : sch_leafFlag
+        	};
+        	var params = {
+        		postData : postData
+        	}
+        	reloadGridData('table_list_2', params);
+        }
+        
+        function do_reset(){
+        	//$("#sch_menuForm").resetForm();
+        	$("#sch_menuForm")[0].reset();
+        }
+        
+    </script>
+
+
+</body>
+
+</html>

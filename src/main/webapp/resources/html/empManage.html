@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>员工管理页面</title>
+<link href="../css/style_emp.css" rel="stylesheet">
+<script type="text/javascript" src="../js/vueCommon.js"></script>
+
+</head>
+<body>
+	<form>
+		<table>
+			<tr><th>添加员工</th></tr>
+			<tr>
+				<td>姓名:</td>
+				<td><input type="text" name="empName" id="empNm"></td>
+			</tr>
+			<tr>
+				<td>薪水:</td>
+				<td><input type="text" name="empSalary" id="empSlry"></td>
+			</tr>
+			<tr>
+				<td>年龄:</td>
+				<td><input type="text" name="empAge" id="age"></td>
+			</tr>
+			<tr>
+				<td><input type="button" value="添加" onclick="doAddEmp()"></td>
+			</tr>
+		</table>
+	</form>
+	<hr>
+	<div id="numDv">
+		<p>{{name}}</p>---------<p>{{message}}</p>
+	</div>
+	<hr>
+	<div id="app-2">
+	  <span v-bind:title="message">
+	    鼠标悬停几秒钟查看此处动态绑定的提示信息！
+	  </span>
+	</div>
+	<hr>
+	<div id="app-3">
+	  <p v-if="seen">现在你看到我了</p>
+	</div>
+	<hr>
+	<div id="app-4">
+	  <ul>
+	    <li v-for="bianliang in todos">
+	      {{ bianliang.name }}
+	    </li>
+	  </ul>
+	</div>
+	<hr>
+	<div id="app-5">
+	  <p>{{ message }}</p>
+	  <button v-on:click="reverseMessage">逆转消息</button>
+	</div>
+	<hr>
+	<div id="app-6">
+	  <p>{{ message }}</p>
+	  <input v-model="message">
+	</div>
+	<hr>
+	<div id="app-7">
+		<ol>
+		  <!-- 创建一个 todo-item 组件的实例 -->
+		  <todo-item
+		  	v-for="aaaa in empList" 
+		  	v-bind:emp="aaaa" 
+		  	v-bind:key="aaaa.id"></todo-item>
+		</ol>
+	</div>
+	
+	<script type="text/javascript">
+		var app1 = new Vue({
+			el : '#numDv',
+			data : {
+				name : '青峰',
+				message : 'SF大的风格的风格前锋'
+			}
+		})
+		
+		var app2 = new Vue({
+		  el: '#app-2',
+		  data: {
+		    message: '页面加载于 ' + new Date().toLocaleString()
+		  }
+		})
+		
+		var app3 = new Vue({
+		  el: '#app-3',
+		  data: {
+		    seen: false
+		  }
+		})
+		
+		var app4 = new Vue({
+		  el: '#app-4',
+		  data: {
+		    todos: [
+		      { text: '学习 JavaScript',name: 'jsjsjs' },
+		      { text: '学习 Vue',name: 'vuevueuve' },
+		      { text: '整个牛项目',name: 'niuniuniu' }
+		    ]
+		  }
+		})
+		
+		var app5 = new Vue({
+		  el: '#app-5',
+		  data: {
+		    message: 'Hello Vue.js!'
+		  },
+		  methods: {
+		    reverseMessage: function () {
+		      this.message = this.message.split('').reverse().join('')
+		    }
+		  }
+		})
+		
+		var app6 = new Vue({
+		  el: '#app-6',
+		  data: {
+		    message: 'Hello Vue!'
+		  }
+		})
+		
+		// 定义名为 todo-item 的新组件
+		Vue.component('todo-item', {
+		  props : ['emp'],
+		  template: '<li>{{ emp.text }}--[{{ emp.id }}]</li>'
+		})
+		
+		var app7 = new Vue({
+		  el: '#app-7',
+		  data: {
+			  empList:[
+				  { id: 0, text: '蔬菜' },
+			      { id: 1, text: '奶酪' },
+			      { id: 2, text: '随便其它什么人吃的东西' }
+			  ]
+		  }
+		})
+	</script>
+</body>
+</html>

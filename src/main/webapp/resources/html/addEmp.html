@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>员工管理</title>
+<link href="../css/style_emp.css" rel="stylesheet">
+<script type="text/javascript" src="../js/common.js"></script>
+
+</head>
+<body>
+	<form>
+		<table>
+			<tr><th>添加员工</th></tr>
+			<tr>
+				<td>姓名:</td>
+				<td><input type="text" name="empName" id="empNm"></td>
+			</tr>
+			<tr>
+				<td>薪水:</td>
+				<td><input type="text" name="empSalary" id="empSlry"></td>
+			</tr>
+			<tr>
+				<td>年龄:</td>
+				<td><input type="text" name="empAge" id="age"></td>
+			</tr>
+			<tr>
+				<td><input type="button" value="添加" onclick="doAddEmp()"></td>
+			</tr>
+		</table>
+	</form>
+	
+	<script type="text/javascript">
+		var v_empName;
+		var v_empSalary;
+		var v_empAge;
+		
+		var emp = {};  
+		
+		function doAddEmp(){
+			v_empName = document.getElementById("empNm").value;
+			v_empSalary = document.getElementById("empSlry").value;
+			v_empAge = document.getElementById("age").value;
+			
+			emp.name = v_empName;
+			emp.salary = v_empSalary;
+			emp.age = v_empAge;
+			$.ajax({
+				url: '/emp/addEmp3/',
+				type: 'POST',
+				dataType: 'json',
+				data: emp,
+				success : function(resp){
+					var status = resp.status;
+					if(status == '00'){
+						$.Pop('保存成功！','alert')
+						window.location.href = basePath + "resources/html/empView.html";
+					}else{
+						$.Pop('保存失败，请打死程序员！','alert',function(){alert('点击确定的回调')})
+					}
+				},
+				error: function(a, b, c){
+					alert(a+"--"+b+"--"+c);
+				}
+					
+			})
+		}
+	</script>
+</body>
+</html>

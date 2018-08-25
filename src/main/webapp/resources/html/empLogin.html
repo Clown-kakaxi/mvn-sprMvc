@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>员工管理</title>
+<link href="../css/style_emp.css" rel="stylesheet">
+<script type="text/javascript" src="../js/common.js"></script>
+</head>
+<body>
+	<h2>员工信息列表</h2>
+	<hr>
+	<div style="color:#fff">
+		<h2>登录 login-action1.do</h2>
+		<p><label>用户</label><input type="text" name="name" id="userName"></p>
+		<p><label>密码</label><input type="password" name="pwd" id="password"></p>
+		<h3><input type="button" value="登录" onclick="on_login()"></h3>
+	</div>
+</body>
+<script type="text/javascript">
+	
+	function on_login(){
+		var v_userName = document.getElementById("userName").value;
+		var v_password = document.getElementById("password").value;
+		if(isEmpty(v_userName) || isEmpty(v_password)){
+			$.Pop('请填写完整！','alert',function(){alert('你是不是傻?')});
+			return;
+		}
+		$.ajax({
+			url: '/live/doLogin',
+			type: 'POST',
+			data: {
+				userName : v_userName,
+				password : v_password
+			},
+			dataType: 'json',
+			success: function(resp){
+				alert('成功啦4324');
+				var status = resp.status;
+				if(status == '00'){
+					$.Pop('登录成功！','alert',function(){
+						//返回列表页面
+						window.location.href = basePath + "resources/html/empView.html";
+					});
+					
+				}else{
+					$.Pop('保存失败，请打死程序员！','alert',function(){alert('点击确定的回调')});
+				}
+			},
+			error: function(a, b, c){
+				alert(JSON.parse(a)+"--"+b+"--"+c);
+			}
+		})
+	}
+</script>
+</html>
