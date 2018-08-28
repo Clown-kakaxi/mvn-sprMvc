@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>★★★ 角色管理页面 ★★★</title>
+<script type="text/javascript" src="../js/inspiniaCommon.js"></script>
+<style>
+    /* Additional style to fix warning dialog position */
+    #alertmod_table_role_list{
+        top: 900px !important;
+    }
+</style>
+</head>
+
+<body>
+
+    <div id="wrapper">
+        <div class="gray-bg" style="padding:0;">
+	        <div class="wrapper wrapper-content  animated fadeInRight">
+	        	<div class="ibox-content m-b-sm border-bottom">
+	        		<form id="sch_roleForm">
+	                <div class="row">
+	                    <div class="col-sm-6">
+	                        <div class="form-group">
+	                            <label class="control-label">角色名称</label>
+	                            <input type="text" id="sch_roleName" value="" placeholder="角色名称" class="form-control">
+	                        </div>
+	                    </div>
+	                </div>
+	               	
+					<div class="row">
+						<div class="pull-right tooltip-demo">
+							<button class="btn btn-success " type="button" onclick="do_searchTreerole()"><i class="fa fa-search"></i>&nbsp;查询</button>
+							<button class="btn btn-white " type="button" onclick="resetForm('sch_roleForm')"><i class="fa fa-times"></i>&nbsp;重置</button>
+		                </div>
+	                </div>
+	                </form>
+	            </div>
+	            <div class="row">
+	                <div class="col-lg-12">
+	                    <div class="ibox ">
+	                        <div class="ibox-title">
+	                            <h5>模块 — — 角色管理</h5>
+	                        </div>
+	                        
+	                        <div class="ibox-content">
+	
+								<p>
+									<button class="btn btn-success " type="button" data-toggle="modal" data-target="#roleFormModal" data-backdrop="false" onclick="initNewData()"><i class="fa fa-plus"></i>&nbsp;<span class="bold">新增</span></button>
+			                        <button class="btn btn-info " type="button" data-toggle="modal" data-target="#roleFormModal" onclick="initEditData()"><i class="fa fa-edit"></i>&nbsp;修改</button>
+			                        <button class="btn btn-danger " type="button" onclick="on_delrole()"><i class="fa fa-times"></i>&nbsp;删除</button>
+			                        <button class="btn btn-warning " type="button"><i class="fa fa-upload"></i>&nbsp;导出</button>
+			                        <!--<button class="btn btn-default " type="button"><i class="fa fa-map-marker"></i>&nbsp;&nbsp;Map</button>
+			
+			                        <a class="btn btn-success btn-facebook">
+			                            <i class="fa fa-facebook"> </i> Sign in with Facebook
+			                        </a>
+			                        <a class="btn btn-success btn-facebook btn-outline">
+			                            <i class="fa fa-facebook"> </i> Sign in with Facebook
+			                        </a>
+			                        <a class="btn btn-white btn-bitbucket">
+			                            <i class="fa fa-user-md">&nbsp;&nbsp;你好</i>
+			                        </a>
+			                        <a class="btn btn-white btn-bitbucket">
+			                            <i class="fa fa-group"></i>
+			                        </a>
+			                        <a class="btn btn-white btn-bitbucket">
+			                            <i class="fa fa-wrench"></i>
+			                        </a>
+			                        <a class="btn btn-white btn-bitbucket">
+			                            <i class="fa fa-exchange"></i>
+			                        </a>
+			                        <a class="btn btn-white btn-bitbucket">
+			                            <i class="fa fa-check-circle-o"></i>
+			                        </a>
+			                        <a class="btn btn-white btn-bitbucket">
+			                            <i class="fa fa-road"></i>
+			                        </a>
+			                        <a class="btn btn-white btn-bitbucket">
+			                            <i class="fa fa-ambulance"></i>
+			                        </a>
+			                        <a class="btn btn-white btn-bitbucket">
+			                            <i class="fa fa-star"></i> Stared
+			                        </a>-->
+			                        <div class="modal inmodal" id="roleFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+		                                <div class="modal-dialog">
+		                                	<div class="modal-content animated bounceInRight">
+		                                        <div class="modal-header">
+		                                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		                                            <!-- <i class="fa fa-th-large modal-icon"></i> -->
+		                                            <h4 class="modal-title" id="modalTitle"></h4>
+		                                            <small class="font-bold"></small>
+		                                        </div>
+		                                        <div class="modal-body">
+		                                            <form role="form" id="roleForm">
+		                                            	<div class="row">
+		                                            		<div class="col-sm-12">
+		                                            			<div style="display:none;"><label>主键Id</label><input id="roleId" type="text" class="form-control"></div>
+		                                            			<div class="form-group"><label>角色名称<i style="color:red">*</i></label> <input id="roleName" type="text" placeholder="请输入..." class="form-control" name="max" required></div>
+		                                            		</div>
+		                                            	</div>
+					                                    <div style="text-align: center;">
+					                                    	<button type="button" class="btn btn-primary m-t-n-xs" data-dismiss="modal" onclick="on_saverole()"><strong>保存</strong></button>
+					                                    </div>
+					                                </form>
+		                                        </div>
+		                                    </div>
+		                                </div>
+		                            </div>
+			                    </p>
+	                            <div class="jqGrid_wrapper">
+	                                <table id="table_role_list"></table>
+	                                <div id="pager_role_list"></div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+
+        </div>
+    </div>
+
+
+
+
+    <script>
+    	
+    	
+    	var selId;//被选中的行号ID 
+    	var gridHeight;
+        $(document).ready(function () {
+        	validForm();
+        	
+        	var l = $('.ladda-button').ladda();
+	        l.click(function(){
+	            l.ladda('start');
+	            setTimeout(function(){
+	                l.ladda('stop');
+	            },800)
+	        });
+	        
+        	var windowHeight = document.body.clientHeight;
+        	gridHeight = windowHeight-260;
+        	initTreeGridData();
+
+            // 将jqgrid 宽度设置为 可以伸缩
+            $(window).bind('resize', function () {
+                var width = $('.jqGrid_wrapper').width();
+                $('#table_role_list').setGridWidth(width);
+            });
+        });
+
+        
+        function initTreeGridData(){
+        	$("#table_role_list").jqGrid({
+        	   	url:'/role/getAuthRoleList',
+        	   	//postData:{'roleId':'1111'},
+        		mtype : "POST",
+        		contentType : "application/json",
+        		datatype: 'json',
+        		autowidth: true,
+        		shrinkToFit: true,
+        		rownumbers: true, //是否显示序号列 true显示，false不显示
+        		colNames:['主键ID', '角色名称', '创建时间'],
+                colModel:[
+                    {name:'id',index:'id', editable: true, width:60, sorttype:"int",search:true},
+                    {name:'name',index:'name', editable: true, width:90, sorttype:"string"},
+                    {name:'crtDate',index:'crtDate', editable: true, sorttype:"date", width:100},
+                ],
+        	   	rowNum:10,
+        	   	rowList:[10,20,100],
+        	   	pager: '#pager_role_list',
+        	   	//sortname: 'id',
+        	    viewrecords: true,
+        	    sortorder: "desc",
+        	    hidegrid: true,
+        	    caption:"角色列表",
+        		onSelectRow : function(rowid,
+        				status) {
+        			selId = rowid;
+        			
+        		}
+        	});
+        	
+        	$("#table_role_list").jqGrid('navGrid','#pager_role_list',{edit:false,add:false,del:false,search:false, reloadAfterSubmit:true});
+        	$('#table_role_list').setGridHeight('320');
+        	$('#table_role_list').jqGrid('setLabel','rn', '序号', {'text-align':'left','color':'blue'},'');
+        }
+        
+        /**
+         * 初始化 新增数据值
+         */
+        function initNewData(){
+        	$("#modalTitle")[0].innerText = '新增角色';
+        }
+        
+        /**
+         * 初始化 修改数据值
+         */
+        function initEditData(){
+        	$("#modalTitle")[0].innerText = '修改角色';
+        	//$.Pop("请选择至少一条数据！", 'confirm', function(){});
+        	var rowid = $("#table_role_list").jqGrid("getGridParam","selrow");
+        	if(!isEmpty(rowid)){
+        		//debugger;
+        		var rowData = $("#table_role_list").jqGrid('getRowData',rowid);//获取该行数据
+        		$("#roleId").val(rowData.id);
+        		$("#roleName").val(rowData.name);
+        	}else{
+        		$.Pop("请选择至少一条数据！", 'alert', function(){});
+        		return;
+        	}
+        }
+        
+        /**
+         * 删除按钮
+         */
+        function on_delrole(){
+        	var rowid = $("#table_role_list").jqGrid("getGridParam","selrow");
+        	if(!isEmpty(rowid)){
+        		$.Pop('确认删除吗？','confirm',function(){
+        			$.ajax({
+        				url: '/role/deleteRole',
+        				type: 'POST',
+        				data: {
+        					id : rowid,
+        				},
+        				dataType: 'json',
+        				success: function(resp){
+        					var status = resp.status;
+        					if(status == '00'){
+        						toastr.success('删除成功!', '提示！');
+        						reloadGridData('table_role_list');
+        					}else{
+        						var message = resp.message;
+        						$.Pop(message, 'alert', function(){});
+        					}
+        				},
+        				error: function(a, b, c){
+        					alert(a+"--"+b+"--"+c);
+        				}
+        			});
+        		});
+        	}else{
+        		$.Pop("请选择至少一条数据！", 'alert', function(){});
+        		return;
+        	}
+        }
+        
+        /**
+         * 验证form表单
+         */
+        function validForm(){
+        	$("#roleForm").validate({
+                rules: {
+                    password: {
+                        required: true,
+                        minlength: 3
+                    },
+                    url: {
+                        required: true,
+                        //url: true
+                    },
+                    number1: {
+                        required: true,
+                        number: true
+                    },
+                    number2: {
+                        required: true,
+                        number: true
+                    },
+                    number3: {
+                        required: true,
+                        number: true
+                    },
+                    min: {
+                        required: true,
+                        minlength: 3
+                    },
+                    max: {
+                        required: true,
+                        maxlength: 6
+                    }
+                    /* select: {
+                    	required: true,
+                    } */
+                }
+            });
+        }
+        
+        /**
+         * 保存角色
+         */
+        function on_saverole(){
+        	var v_id = $("#roleId").val();
+        	if(isEmpty(v_id)){
+        		v_id = '0';
+        	}
+        	var v_roleName = $("#roleName").val();
+        	$.ajax({
+				url: '/role/saveRole',
+				type: 'POST',
+				data: {
+					Id : v_id,
+					name : v_roleName,
+				},
+				dataType: 'json',
+				success: function(resp){
+					var status = resp.status;
+					if(status == '00'){
+						toastr.success('保存成功22!', '提示！');
+						$.Pop("保存成功111", 'alert', function(){});
+						reloadGridData('table_role_list');
+					}else{
+						var message = resp.message;
+						$.Pop(message, 'alert', function(){});
+					}
+				},
+				error: function(a, b, c){
+					alert(a+"--"+b+"--"+c);
+				}
+			});
+        }
+        
+        //选择下拉框
+        var config = {
+            '.chosen-select'           : {},
+            '.chosen-select-deselect'  : {allow_single_deselect:true},
+            '.chosen-select-no-single' : {disable_search_threshold:10},
+            '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+            '.chosen-select-width'     : {width:"95%"}
+        }
+        for (var selector in config) {
+            $(selector).chosen(config[selector]);
+        }
+        
+        //条件搜索功能
+        function do_searchTreerole(){
+        	var sch_roleName = $('#sch_roleName').val();
+        	var sch_roleLevel = $('#sch_roleLevel').val();
+        	var sch_leafFlag = $('#sch_leafFlag option:selected').val();
+        	var postData = {
+       			name : sch_roleName,
+           		treeLevel : sch_roleLevel,
+           		leafFlag : sch_leafFlag
+        	};
+        	var params = {
+        		postData : postData
+        	}
+        	reloadGridData('table_role_list', params);
+        }
+        
+        function do_reset(){
+        	//$("#sch_roleForm").resetForm();
+        	$("#sch_roleForm")[0].reset();
+        }
+        
+    </script>
+
+
+</body>
+
+</html>
