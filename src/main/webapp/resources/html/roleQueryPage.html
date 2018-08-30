@@ -6,17 +6,17 @@
 <script type="text/javascript" src="../js/inspiniaCommon.js"></script>
 <style>
     /* Additional style to fix warning dialog position */
-    #alertmod_table_role_list{
+    #alertmod_table_query_role{
         top: 900px !important;
     }
 </style>
 </head>
 
-<body style="margin:0; padding:0;">
+<body>
 
-    <div id="wrapper" style="margin:0; padding:0;">
-        <div class="gray-bg" style="margin:0; padding:0;height:500px;">
-	        <div class="wrapper wrapper-content  animated fadeInRight" style="margin:0; padding:0;">
+    <div id="wrapper" >
+        <div class="gray-bg" style="margin:0; padding:0;height:100%;">
+	        <div class="wrapper wrapper-content  animated fadeInRight">
 	            <div class="row" style="margin:0; padding:0;">
 	                <div class="col-lg-12">
 	                    <div class="ibox ">
@@ -40,8 +40,8 @@
 					                        </div>
 					                    </div>
 					                </div>
-	                                <table id="table_role_list"></table>
-	                                <div id="pager_role_list"></div>
+	                                <table id="table_query_role"></table>
+	                                <div id="pager_query_role"></div>
 	                            </div>
 	                        </div>
 	                        
@@ -62,7 +62,6 @@
     	var selId;//被选中的行号ID 
     	var gridHeight;
         $(document).ready(function () {
-        	validForm();
         	
         	var l = $('.ladda-button').ladda();
 	        l.click(function(){
@@ -79,13 +78,13 @@
             // 将jqgrid 宽度设置为 可以伸缩
             $(window).bind('resize', function () {
                 var width = $('.jqGrid_wrapper').width();
-                $('#table_role_list').setGridWidth(width);
+                $('#table_query_role').setGridWidth(width);
             });
         });
 
         
         function initTreeGridData(){
-        	$("#table_role_list").jqGrid({
+        	$("#table_query_role").jqGrid({
         	   	url:'/role/getAuthRoleList',
         	   	//postData:{'roleId':'1111'},
         		mtype : "POST",
@@ -102,7 +101,7 @@
                 ],
         	   	rowNum:10,
         	   	rowList:[10,20,100],
-        	   	pager: '#pager_role_list',
+        	   	pager: '#pager_query_role',
         	   	//sortname: 'id',
         	    viewrecords: true,
         	    sortorder: "desc",
@@ -115,145 +114,11 @@
         		}
         	});
         	
-        	$("#table_role_list").jqGrid('navGrid','#pager_role_list',{edit:false,add:false,del:false,search:false, reloadAfterSubmit:true});
-        	$('#table_role_list').setGridHeight('100');
-        	$('#table_role_list').jqGrid('setLabel','rn', '序号', {'text-align':'left','color':'blue'},'');
+        	$("#table_query_role").jqGrid('navGrid','#pager_query_role',{edit:false,add:false,del:false,search:false, reloadAfterSubmit:true});
+        	$('#table_query_role').setGridHeight('152');
+        	$('#table_query_role').jqGrid('setLabel','rn', '序号', {'text-align':'left','color':'blue'},'');
         }
         
-        /**
-         * 初始化 新增数据值
-         */
-        function initNewData(){
-        	$("#modalTitle")[0].innerText = '新增角色';
-        }
-        
-        /**
-         * 初始化 修改数据值
-         */
-        function initEditData(){
-        	$("#modalTitle")[0].innerText = '修改角色';
-        	//$.Pop("请选择至少一条数据！", 'confirm', function(){});
-        	var rowid = $("#table_role_list").jqGrid("getGridParam","selrow");
-        	if(!isEmpty(rowid)){
-        		//debugger;
-        		var rowData = $("#table_role_list").jqGrid('getRowData',rowid);//获取该行数据
-        		$("#roleId").val(rowData.id);
-        		$("#roleName").val(rowData.name);
-        	}else{
-        		$.Pop("请选择至少一条数据！", 'alert', function(){});
-        		return;
-        	}
-        }
-        
-        /**
-         * 删除按钮
-         */
-        function on_delrole(){
-        	var rowid = $("#table_role_list").jqGrid("getGridParam","selrow");
-        	if(!isEmpty(rowid)){
-        		$.Pop('确认删除吗？','confirm',function(){
-        			$.ajax({
-        				url: '/role/deleteRole',
-        				type: 'POST',
-        				data: {
-        					id : rowid,
-        				},
-        				dataType: 'json',
-        				success: function(resp){
-        					var status = resp.status;
-        					if(status == '00'){
-        						toastr.success('删除成功!', '提示！');
-        						reloadGridData('table_role_list');
-        					}else{
-        						var message = resp.message;
-        						$.Pop(message, 'alert', function(){});
-        					}
-        				},
-        				error: function(a, b, c){
-        					alert(a+"--"+b+"--"+c);
-        				}
-        			});
-        		});
-        	}else{
-        		$.Pop("请选择至少一条数据！", 'alert', function(){});
-        		return;
-        	}
-        }
-        
-        /**
-         * 验证form表单
-         */
-        function validForm(){
-        	$("#roleForm").validate({
-                rules: {
-                    password: {
-                        required: true,
-                        minlength: 3
-                    },
-                    url: {
-                        required: true,
-                        //url: true
-                    },
-                    number1: {
-                        required: true,
-                        number: true
-                    },
-                    number2: {
-                        required: true,
-                        number: true
-                    },
-                    number3: {
-                        required: true,
-                        number: true
-                    },
-                    min: {
-                        required: true,
-                        minlength: 3
-                    },
-                    max: {
-                        required: true,
-                        maxlength: 6
-                    }
-                    /* select: {
-                    	required: true,
-                    } */
-                }
-            });
-        }
-        
-        /**
-         * 保存角色
-         */
-        function on_saverole(){
-        	var v_id = $("#roleId").val();
-        	if(isEmpty(v_id)){
-        		v_id = '0';
-        	}
-        	var v_roleName = $("#roleName").val();
-        	$.ajax({
-				url: '/role/saveRole',
-				type: 'POST',
-				data: {
-					Id : v_id,
-					name : v_roleName,
-				},
-				dataType: 'json',
-				success: function(resp){
-					var status = resp.status;
-					if(status == '00'){
-						toastr.success('保存成功22!', '提示！');
-						$.Pop("保存成功111", 'alert', function(){});
-						reloadGridData('table_role_list');
-					}else{
-						var message = resp.message;
-						$.Pop(message, 'alert', function(){});
-					}
-				},
-				error: function(a, b, c){
-					alert(a+"--"+b+"--"+c);
-				}
-			});
-        }
         
         //选择下拉框
         var config = {
@@ -280,11 +145,10 @@
         	var params = {
         		postData : postData
         	}
-        	reloadGridData('table_role_list', params);
+        	reloadGridData('table_query_role', params);
         }
         
         function do_reset(){
-        	//$("#sch_roleForm").resetForm();
         	$("#sch_roleForm")[0].reset();
         }
         

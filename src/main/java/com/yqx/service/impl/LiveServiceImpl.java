@@ -10,9 +10,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -28,6 +31,10 @@ import com.yqx.util.JDBCDataSource;
 public class LiveServiceImpl implements LiveService{
 
 	private Logger log = LoggerFactory.getLogger(EmpServiceImpl.class);
+	
+	@Autowired
+	@Qualifier("dsMysql")
+	private DataSource ds;
 	
 	@Resource
 	private LiveDao liveDao;
@@ -245,7 +252,26 @@ public class LiveServiceImpl implements LiveService{
 		Map<String, Object> map = qa.getJSONByCondition(colNames, true, list);
 		return map;
 	}
+
 	
-	
+	@Override
+	public Map<String, Object> findTreeMenuByAuthRole(String roleId) throws Exception {
+		StringBuilder sb = new StringBuilder("");
+		List<String[]> list = new ArrayList<String[]>();
+		sb.append(" select tm.* from tree_menu tm ");
+		sb.append(" left join auth_role_menu_rel mr on mr.menu_id=tm.id ");
+		sb.append(" where mr.status='1' ");
+		if(!StringUtils.isEmpty(roleId)){
+			sb.append(" and mr.role_id=? ");
+			String[] params = new String[1];
+			params[0] = roleId;
+			list.add(params);
+		}
+		sb.append(" order by tm.tree_level,tm.order_ asc ");
+		QueryAssistant qa = new QueryAssistant(sb.toString(), ds.getConnection());
+		String[] colNames = new String[]{"id","name","crtDate","appId","order_","icon","leafFlag","tip","type","mocFuncId","parentId","isMobile","treeLevel"};
+		Map<String, Object> map = qa.getJSONByCondition(colNames, true, list);
+		return map;
+	}
 	
 }

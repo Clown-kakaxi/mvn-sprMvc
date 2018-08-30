@@ -53,7 +53,12 @@
 			success: function(resp){
 				var status = resp.status;
 				if(status == '00'){
-					window.localStorage.setItem('userId',v_userName);
+					var data = resp.data;
+					if(!isEmpty(data)){
+						var v_roleId = data.id;
+						window.localStorage.setItem('roleId_',v_roleId);
+					}
+					window.localStorage.setItem('userId_',v_userName);
 					//返回列表页面
 					window.location.href = basePath + "resources/html/index.html";
 				}else{

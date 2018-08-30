@@ -24,6 +24,7 @@ import com.yqx.baseUtil.JPABaseDAO;
 import com.yqx.core.PagingInfo;
 import com.yqx.core.QueryAssistant;
 import com.yqx.model.AuthRole;
+import com.yqx.model.AuthRoleUserRel;
 import com.yqx.service.RoleService;
 
 @Service("roleService")
@@ -93,4 +94,26 @@ public class RoleServiceImpl extends CommonService implements RoleService{
 		
 	}
 
+	/**
+	 * 根据 【用户id】 获取角色信息
+	 */
+	@Override
+	public AuthRole getAuthRoleById(Long roleId) {
+		AuthRole authRole = super.em.find(AuthRole.class, roleId);
+		return authRole;
+	}
+
+	@Override
+	public void saveRoleUserRel(String roleId, String userIds) {
+		String[] userArr = userIds.split(",");
+		for(int i=0; i<userArr.length; i++){
+			AuthRoleUserRel authRoleUserRel = new AuthRoleUserRel();
+			authRoleUserRel.setUserType(2);//2为用户
+			authRoleUserRel.setUserId(Long.parseLong(userArr[i]));
+			authRoleUserRel.setRoleId(Long.parseLong(roleId));
+			authRoleUserRel.setStatus("1");
+			super.save(authRoleUserRel);
+		}
+	}
+	
 }

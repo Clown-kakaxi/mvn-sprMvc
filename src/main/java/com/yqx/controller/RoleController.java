@@ -1,6 +1,7 @@
 package com.yqx.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -90,6 +92,33 @@ public class RoleController{
 		} catch (Exception e) {
 			map.put("status", ProjConstants.ERROR_FLAG);
 			map.put("message", "删除失败，请打死程序猿！");
+		}
+		return map;
+	}
+	
+	/**
+	 * 角色 -- 用户关系表配置保存
+	 * @param roleId
+	 * @param userIds
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value="/saveRoleUserRel")
+	@ResponseBody
+	public Map<String, Object> saveRoleUserRel(String roleId, String userIds) throws Exception{
+		log.debug("*************  role!saveRoleUserRel  *********************");
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("status", ProjConstants.ERROR_FLAG);
+		if(StringUtils.isEmpty(roleId) || StringUtils.isEmpty(userIds)){
+			map.put("message", "请求参数为空！");
+			return map;
+		}
+		try {
+			roleService.saveRoleUserRel(roleId, userIds);
+			map.put("status", ProjConstants.SUCCESS_FLAG);
+		} catch (Exception e) {
+			e.printStackTrace();
+			map.put("message", "保存配置信息报错，请打死程序猿！");
 		}
 		return map;
 	}

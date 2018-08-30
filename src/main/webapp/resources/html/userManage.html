@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>★★★ 用户管理页面 ★★★</title>
+<script type="text/javascript" src="../js/inspiniaCommon.js"></script>
+<style>
+    /* Additional style to fix warning dialog position */
+    #alertmod_table_user_list{
+        top: 900px !important;
+    }
+</style>
+</head>
+
+<body>
+
+    <div id="wrapper">
+        <div class="gray-bg" style="padding:0;">
+	        <div class="wrapper wrapper-content  animated fadeInRight">
+	        	<div class="ibox-content m-b-sm border-bottom">
+	        		<form id="sch_userForm">
+	                <div class="row">
+	                	<div class="col-sm-4">
+	                        <div class="form-group">
+	                            <label class="control-label">用户名称</label>
+	                            <input type="text" id="sch_userName" value="" placeholder="用户名称" class="form-control">
+	                        </div>
+	                    </div>
+	                    <div class="col-sm-4">
+	                        <div class="form-group">
+	                            <label class="control-label">用户等级</label>
+	                            <input type="text" id="sch_userLevel" value="" placeholder="用户等级" class="form-control">
+	                        </div>
+	                    </div>
+	                    <div class="col-sm-4">
+	                        <div class="form-group">
+	                        	<label class="control-label">是否主播</label>
+	                            <select id="sch_isAnchor" class="form-control">
+	                            	<option value="none"></option>
+	                                <option value="1">是</option>
+	                                <option value="0">否</option>
+	                            </select>
+	                        </div>
+	                    </div>
+	                </div>
+	               	
+					<div class="row">
+						<div class="pull-right tooltip-demo">
+							<button class="btn btn-success " type="button" onclick="do_searchTreeuser()"><i class="fa fa-search"></i>&nbsp;查询</button>
+							<button class="btn btn-white " type="button" onclick="resetForm('sch_userForm')"><i class="fa fa-times"></i>&nbsp;重置</button>
+		                </div>
+	                </div>
+	                </form>
+	            </div>
+	            <div class="row">
+	                <div class="col-lg-12">
+	                    <div class="ibox ">
+	                        <div class="ibox-title">
+	                            <h5>模块 — — 用户管理</h5>
+	                        </div>
+	                        
+	                        <div class="ibox-content">
+	
+								<p>
+									<!-- <button class="btn btn-success " type="button" data-toggle="modal" data-target="#userFormModal" data-backdrop="false" onclick="initNewData()"><i class="fa fa-plus"></i>&nbsp;<span class="bold">新增</span></button>
+			                        <button class="btn btn-info " type="button" data-toggle="modal" data-target="#userFormModal" onclick="initEditData()"><i class="fa fa-edit"></i>&nbsp;修改</button>
+			                        <button class="btn btn-danger " type="button" onclick="on_deluser()"><i class="fa fa-times"></i>&nbsp;删除</button>
+			                        <button class="btn btn-warning " type="button"><i class="fa fa-upload"></i>&nbsp;导出</button> -->
+			                        
+			                        <div class="modal inmodal" id="userFormModal" tabindex="-1" user="dialog" aria-hidden="true">
+		                                <div class="modal-dialog">
+		                                	<div class="modal-content animated bounceInRight">
+		                                        <div class="modal-header">
+		                                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		                                            <!-- <i class="fa fa-th-large modal-icon"></i> -->
+		                                            <h4 class="modal-title" id="modalTitle"></h4>
+		                                            <small class="font-bold"></small>
+		                                        </div>
+		                                        <div class="modal-body">
+		                                            <form user="form" id="userForm">
+		                                            	<div class="row">
+		                                            		<div class="col-sm-12">
+		                                            			<div style="display:none;"><label>主键Id</label><input id="userId" type="text" class="form-control"></div>
+		                                            			<div class="form-group"><label>用户名称<i style="color:red">*</i></label> <input id="userName" type="text" placeholder="请输入..." class="form-control" name="max" required></div>
+		                                            		</div>
+		                                            	</div>
+					                                    <div style="text-align: center;">
+					                                    	<button type="button" class="btn btn-primary m-t-n-xs" data-dismiss="modal" onclick="on_saveuser()"><strong>保存</strong></button>
+					                                    </div>
+					                                </form>
+		                                        </div>
+		                                    </div>
+		                                </div>
+		                            </div>
+			                    </p>
+	                            <div class="jqGrid_wrapper">
+	                                <table id="table_user_list"></table>
+	                                <div id="pager_user_list"></div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+
+        </div>
+    </div>
+
+
+
+
+    <script>
+    	
+    	
+    	var selId;//被选中的行号ID 
+    	var gridHeight;
+        $(document).ready(function () {
+        	validForm();
+        	
+        	var l = $('.ladda-button').ladda();
+	        l.click(function(){
+	            l.ladda('start');
+	            setTimeout(function(){
+	                l.ladda('stop');
+	            },800)
+	        });
+	        
+        	var windowHeight = document.body.clientHeight;
+        	gridHeight = windowHeight-260;
+        	initTreeGridData();
+
+            // 将jqgrid 宽度设置为 可以伸缩
+            $(window).bind('resize', function () {
+                var width = $('.jqGrid_wrapper').width();
+                $('#table_user_list').setGridWidth(width);
+            });
+        });
+
+        
+        function initTreeGridData(){
+        	$("#table_user_list").jqGrid({
+        	   	url:'/user/getUserList',
+        	   	//postData:{'userId':'1111'},
+        		mtype : "POST",
+        		contentType : "application/json",
+        		datatype: 'json',
+        		autowidth: true,
+        		shrinkToFit: true,
+        		rownumbers: true, //是否显示序号列 true显示，false不显示
+        		colNames:['主键ID', '用户名称', '创建时间'],
+                colModel:[
+                    {name:'id',index:'id', editable: true, width:60, sorttype:"int",search:true},
+                    {name:'name',index:'name', editable: true, width:90, sorttype:"string"},
+                    {name:'registTime',index:'registTime', editable: true, sorttype:"date", width:100},
+                ],
+        	   	rowNum:10,
+        	   	rowList:[10,20,100],
+        	   	pager: '#pager_user_list',
+        	   	//sortname: 'id',
+        	    viewrecords: true,
+        	    sortorder: "desc",
+        	    hidegrid: true,
+        	    caption:"用户列表",
+        		onSelectRow : function(rowid,
+        				status) {
+        			selId = rowid;
+        			
+        		}
+        	});
+        	
+        	$("#table_user_list").jqGrid('navGrid','#pager_user_list',{edit:false,add:false,del:false,search:false, reloadAfterSubmit:true});
+        	$('#table_user_list').setGridHeight('320');
+        	$('#table_user_list').jqGrid('setLabel','rn', '序号', {'text-align':'left','color':'blue'},'');
+        }
+        
+        /**
+         * 初始化 新增数据值
+         */
+        function initNewData(){
+        	$("#modalTitle")[0].innerText = '新增用户';
+        }
+        
+        /**
+         * 初始化 修改数据值
+         */
+        function initEditData(){
+        	$("#modalTitle")[0].innerText = '修改用户';
+        	//$.Pop("请选择至少一条数据！", 'confirm', function(){});
+        	var rowid = $("#table_user_list").jqGrid("getGridParam","selrow");
+        	if(!isEmpty(rowid)){
+        		//debugger;
+        		var rowData = $("#table_user_list").jqGrid('getRowData',rowid);//获取该行数据
+        		$("#userId").val(rowData.id);
+        		$("#userName").val(rowData.name);
+        	}else{
+        		$.Pop("请选择至少一条数据！", 'alert', function(){});
+        		return;
+        	}
+        }
+        
+        /**
+         * 删除按钮
+         */
+        function on_deluser(){
+        	var rowid = $("#table_user_list").jqGrid("getGridParam","selrow");
+        	if(!isEmpty(rowid)){
+        		$.Pop('确认删除吗？','confirm',function(){
+        			$.ajax({
+        				url: '/user/deleteuser',
+        				type: 'POST',
+        				data: {
+        					id : rowid,
+        				},
+        				dataType: 'json',
+        				success: function(resp){
+        					var status = resp.status;
+        					if(status == '00'){
+        						toastr.success('删除成功!', '提示！');
+        						reloadGridData('table_user_list');
+        					}else{
+        						var message = resp.message;
+        						$.Pop(message, 'alert', function(){});
+        					}
+        				},
+        				error: function(a, b, c){
+        					alert(a+"--"+b+"--"+c);
+        				}
+        			});
+        		});
+        	}else{
+        		$.Pop("请选择至少一条数据！", 'alert', function(){});
+        		return;
+        	}
+        }
+        
+        /**
+         * 验证form表单
+         */
+        function validForm(){
+        	$("#userForm").validate({
+                rules: {
+                    password: {
+                        required: true,
+                        minlength: 3
+                    },
+                    url: {
+                        required: true,
+                        //url: true
+                    },
+                    number1: {
+                        required: true,
+                        number: true
+                    },
+                    number2: {
+                        required: true,
+                        number: true
+                    },
+                    number3: {
+                        required: true,
+                        number: true
+                    },
+                    min: {
+                        required: true,
+                        minlength: 3
+                    },
+                    max: {
+                        required: true,
+                        maxlength: 6
+                    }
+                    /* select: {
+                    	required: true,
+                    } */
+                }
+            });
+        }
+        
+        /**
+         * 保存用户
+         */
+        function on_saveuser(){
+        	var v_id = $("#userId").val();
+        	if(isEmpty(v_id)){
+        		v_id = '0';
+        	}
+        	var v_userName = $("#userName").val();
+        	$.ajax({
+				url: '/user/saveuser',
+				type: 'POST',
+				data: {
+					Id : v_id,
+					name : v_userName,
+				},
+				dataType: 'json',
+				success: function(resp){
+					var status = resp.status;
+					if(status == '00'){
+						toastr.success('保存成功22!', '提示！');
+						$.Pop("保存成功111", 'alert', function(){});
+						reloadGridData('table_user_list');
+					}else{
+						var message = resp.message;
+						$.Pop(message, 'alert', function(){});
+					}
+				},
+				error: function(a, b, c){
+					alert(a+"--"+b+"--"+c);
+				}
+			});
+        }
+        
+        //选择下拉框
+        var config = {
+            '.chosen-select'           : {},
+            '.chosen-select-deselect'  : {allow_single_deselect:true},
+            '.chosen-select-no-single' : {disable_search_threshold:10},
+            '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+            '.chosen-select-width'     : {width:"95%"}
+        }
+        for (var selector in config) {
+            $(selector).chosen(config[selector]);
+        }
+        
+        //条件搜索功能
+        function do_searchTreeuser(){
+        	var sch_userName = $('#sch_userName').val();
+        	var sch_userLevel = $('#sch_userLevel').val();
+        	var sch_leafFlag = $('#sch_leafFlag option:selected').val();
+        	var postData = {
+       			name : sch_userName,
+           		treeLevel : sch_userLevel,
+           		leafFlag : sch_leafFlag
+        	};
+        	var params = {
+        		postData : postData
+        	}
+        	reloadGridData('table_user_list', params);
+        }
+        
+        function do_reset(){
+        	//$("#sch_userForm").resetForm();
+        	$("#sch_userForm")[0].reset();
+        }
+        
+    </script>
+
+
+</body>
+
+</html>

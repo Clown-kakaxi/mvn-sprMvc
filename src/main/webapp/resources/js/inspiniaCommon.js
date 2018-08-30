@@ -41,6 +41,7 @@ document.write('<link rel="stylesheet" type="text/css" href="' + _filePath + 'in
 document.write('<link rel="stylesheet" type="text/css" href="' + _filePath + 'inspinia/css/animate.css"/>');
 document.write('<link rel="stylesheet" type="text/css" href="' + _filePath + 'inspinia/css/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css"/>');/*jqgrid*/
 document.write('<link rel="stylesheet" type="text/css" href="' + _filePath + 'inspinia/css/plugins/jqGrid/ui.jqgrid.css"/>');/*jqgrid*/
+document.write('<link rel="stylesheet" type="text/css" href="' + _filePath + 'css/zTreeStyle/zTreeStyle.css"/>');/*zTree*/
 document.write('<link rel="stylesheet" type="text/css" href="' + _filePath + 'inspinia/css/style.css"/>');
 
 /*Mainly scripts*/
@@ -62,6 +63,8 @@ document.write('<script src="' + _filePath + 'inspinia/js/demo/peity-demo.js"></
 /*jqGrid scripts*/
 document.write('<script src="' + _filePath + 'inspinia/js/plugins/jqGrid/i18n/grid.locale-en.js"></script>');
 document.write('<script src="' + _filePath + 'inspinia/js/plugins/jqGrid/jquery.jqGrid.min.js"></script>');
+/*jqGrid 翻页参数设置 */
+document.write('<script src="' + _filePath + 'js/jqgrid/lodash.min.js"></script>');
 /*Custom and plugin scripts*/
 document.write('<script src="' + _filePath + 'inspinia/js/inspinia.js"></script>');
 document.write('<script src="' + _filePath + 'inspinia/js/plugins/pace/pace.min.js"></script>');
@@ -90,6 +93,9 @@ document.write('<script src="' + _filePath + 'inspinia/js/plugins/ladda/ladda.mi
 document.write('<script src="' + _filePath + 'inspinia/js/plugins/ladda/ladda.jquery.min.js"></script>');
 /*Jquery Validate*/
 document.write('<script src="' + _filePath + 'inspinia/js/plugins/validate/jquery.validate.min.js"></script>');
+/*zTree scripts*/
+document.write('<script src="' + _filePath + 'js/ztree/jquery.ztree.core.js"></script>');
+document.write('<script src="' + _filePath + 'js/ztree/jquery.ztree.excheck.js"></script>');
 /*conf scripts*/
 document.write('<script src="' + _filePath + 'js/config.js"></script>');
 document.write('<script src="' + _filePath + 'js/tool.js"></script>');

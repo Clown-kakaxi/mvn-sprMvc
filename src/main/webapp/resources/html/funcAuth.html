@@ -19,11 +19,11 @@
 	        <div class="wrapper wrapper-content  animated fadeInRight">
 	        	<div class="ibox-content m-b-sm border-bottom">
 	                <div class="row">
-	                    <div class="col-sm-6">
-	                        <div class="form-group">
-	                            <label class="control-label">角色名称</label>
-	                            <input type="text" id="auth_roleName" value="" placeholder="角色名称" data-toggle="modal" data-target="#roleFormModal" class="form-control">
-	                        </div>
+	                    <div class="col-sm-2">
+                            <label >角色名称</label>
+	                    </div>
+	                    <div class="col-sm-3">
+                            <input type="text" id="auth_roleName" value="" readOnly="true" placeholder="角色名称" data-toggle="modal" data-target="#roleFormModal" class="form-control">
 	                    </div>
 	                </div>
 	            </div>
@@ -37,13 +37,13 @@
                                 <small class="font-bold"></small>
                             </div>
                             <div class="modal-body" style="margin:0; padding:0;">
-                            	<iframe src="roleQueryPage.html" id="roleFrame" >
+                            	<iframe src="roleQueryPage.html" id="roleFrame" name="roleFrameTest">
                             		
                             	</iframe>
                             </div>
                             
                             <div class="modal-footer" style="text-align:center;padding:2px;">
-                                <button type="button" class="btn btn-primary" data-dismiss="modal">选择</button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="do_chooseRole()">选定</button>
                             </div>
                         </div>
                     </div>
@@ -59,12 +59,13 @@
 	                        <div class="ibox-content">
 	
 								<p>
-			                        <button class="btn btn-info " type="button" data-toggle="modal" data-target="#roleFormModal" onclick="initEditData()"><i class="fa fa-edit"></i>&nbsp;配置</button>
+			                        <button class="btn btn-info " type="button" onclick="configRoleMenu()"><i class="fa fa-edit"></i>&nbsp;配置</button>
 			                        <button class="btn btn-warning " type="button"><i class="fa fa-upload"></i>&nbsp;导出</button>
 			                    </p>
 	                            <div class="jqGrid_wrapper">
-	                                <table id="table_list_2"></table>
-	                                <div id="pager_list_2"></div>
+	                            	<div >
+										<ul id="treeDemo" class="ztree"></ul>
+									</div>
 	                            </div>
 	                        </div>
 	                    </div>
@@ -79,12 +80,46 @@
 
 
     <script>
+    
+    var setting = {
+			check: {
+				enable: true
+			},
+			data: {
+				simpleData: {
+					enable: true
+				}
+			}
+		};
+
+		var zNodes =[
+			{ id:1, pId:0, name:"随意勾选 1", open:true},
+			{ id:11, pId:1, name:"随意勾选 1-1", open:true},
+			{ id:111, pId:11, name:"随意勾选 1-1-1"},
+			{ id:112, pId:11, name:"随意勾选 1-1-2"},
+			{ id:12, pId:1, name:"随意勾选 1-2", open:true},
+			{ id:121, pId:12, name:"随意勾选 1-2-1"},
+			{ id:122, pId:12, name:"随意勾选 1-2-2"},
+			{ id:2, pId:0, name:"随意勾选 2", open:true},
+			{ id:21, pId:2, name:"随意勾选 2-1"},
+			{ id:22, pId:2, name:"随意勾选 2-2", open:true},
+			{ id:221, pId:22, name:"随意勾选 2-2-1"},
+			{ id:222, pId:22, name:"随意勾选 2-2-2"},
+			{ id:23, pId:2, name:"随意勾选 2-3"}
+		];
+		
+		function setCheck() {
+			var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+			zTree.setting.check.chkboxType = { "Y" : "ps", "N" : "ps" };
+		}
+		
     	
+    	var roleId;//选中角色ID
+    	var roleName;//选中角色名
     	
     	var selId;//被选中的行号ID 
     	var gridHeight;
         $(document).ready(function () {
-        	validForm();
         	
         	var l = $('.ladda-button').ladda();
 	        l.click(function(){
@@ -96,173 +131,72 @@
 	        
         	var windowHeight = document.body.clientHeight;
         	gridHeight = windowHeight-260;
-        	initTreeGridData();
-        	var frameheight = windowHeight-150;
+        	initFuncTreeData();
+        	var frameheight = windowHeight-250;
         	
-            // 将jqgrid 宽度设置为 可以伸缩
-            $(window).bind('resize', function () {
-                var width = $('.jqGrid_wrapper').width();
-                $('#table_list_2').setGridWidth(width);
-                //$('#roleFrame').css({"width":"100%","height":gridHeight-200});
-            });
-            
-            //将放大镜 frame 宽高设置
-            $('#roleFrame').css({"width":"100%","height":frameheight});
+        	$('#roleFrame').css({'width':'100%','height':gridHeight});
+        	
         });
 
         
-        function initTreeGridData(){
-        	$("#table_list_2").jqGrid({
-        	   	url:'/role/getAuthRoleList',
-        	   	//postData:{'roleId':'1111'},
-        		mtype : "POST",
-        		contentType : "application/json",
-        		datatype: 'json',
-        		autowidth: true,
-        		shrinkToFit: true,
-        		rownumbers: true, //是否显示序号列 true显示，false不显示
-        		colNames:['主键ID', '功能权限名称', '创建时间'],
-                colModel:[
-                    {name:'id',index:'id', editable: true, width:60, sorttype:"int",search:true},
-                    {name:'name',index:'name', editable: true, width:90, sorttype:"string"},
-                    {name:'crtDate',index:'crtDate', editable: true, sorttype:"date", width:100},
-                ],
-        	   	rowNum:10,
-        	   	rowList:[10,20,100],
-        	   	pager: '#pager_list_2',
-        	   	//sortname: 'id',
-        	    viewrecords: true,
-        	    sortorder: "desc",
-        	    hidegrid: true,
-        	    caption:"功能权限列表",
-        		onSelectRow : function(rowid,
-        				status) {
-        			selId = rowid;
-        			
-        		}
-        	});
-        	
-        	$("#table_list_2").jqGrid('navGrid','#pager_list_2',{edit:false,add:false,del:false,search:false, reloadAfterSubmit:true});
-        	$('#table_list_2').setGridHeight('320');
-        	$('#table_list_2').jqGrid('setLabel','rn', '序号', {'text-align':'left','color':'blue'},'');
-        }
-        
-        /**
-         * 初始化 新增数据值
-         */
-        function initNewData(){
-        	$("#modalTitle")[0].innerText = '新增功能权限';
-        }
-        
-        /**
-         * 初始化 修改数据值
-         */
-        function initEditData(){
-        	$("#modalTitle")[0].innerText = '修改功能权限';
-        	//$.Pop("请选择至少一条数据！", 'confirm', function(){});
-        	var rowid = $("#table_list_2").jqGrid("getGridParam","selrow");
-        	if(!isEmpty(rowid)){
-        		//debugger;
-        		var rowData = $("#table_list_2").jqGrid('getRowData',rowid);//获取该行数据
-        		$("#roleId").val(rowData.id);
-        		$("#roleName").val(rowData.name);
-        	}else{
-        		$.Pop("请选择至少一条数据！", 'alert', function(){});
-        		return;
-        	}
-        }
-        
-        /**
-         * 删除按钮
-         */
-        function on_delrole(){
-        	var rowid = $("#table_list_2").jqGrid("getGridParam","selrow");
-        	if(!isEmpty(rowid)){
-        		$.Pop('确认删除吗？','confirm',function(){
-        			$.ajax({
-        				url: '/role/deleteRole',
-        				type: 'POST',
-        				data: {
-        					id : rowid,
-        				},
-        				dataType: 'json',
-        				success: function(resp){
-        					var status = resp.status;
-        					if(status == '00'){
-        						toastr.success('删除成功!', '提示！');
-        						reloadGridData('table_list_2');
-        					}else{
-        						var message = resp.message;
-        						$.Pop(message, 'alert', function(){});
-        					}
-        				},
-        				error: function(a, b, c){
-        					alert(a+"--"+b+"--"+c);
-        				}
-        			});
-        		});
-        	}else{
-        		$.Pop("请选择至少一条数据！", 'alert', function(){});
-        		return;
-        	}
-        }
-        
-        /**
-         * 验证form表单
-         */
-        function validForm(){
-        	$("#roleForm").validate({
-                rules: {
-                    password: {
-                        required: true,
-                        minlength: 3
-                    },
-                    url: {
-                        required: true,
-                        //url: true
-                    },
-                    number1: {
-                        required: true,
-                        number: true
-                    },
-                    number2: {
-                        required: true,
-                        number: true
-                    },
-                    number3: {
-                        required: true,
-                        number: true
-                    },
-                    min: {
-                        required: true,
-                        minlength: 3
-                    },
-                    max: {
-                        required: true,
-                        maxlength: 6
-                    }
-                    /* select: {
-                    	required: true,
-                    } */
-                }
-            });
-        }
-        
-        /**
-         * 保存功能权限
-         */
-        function on_saverole(){
-        	var v_id = $("#roleId").val();
-        	if(isEmpty(v_id)){
-        		v_id = '0';
-        	}
-        	var v_roleName = $("#roleName").val();
+        function initFuncTreeData(v_roleId){
         	$.ajax({
-				url: '/role/saveRole',
+				url: '/funcAuth/getFuncTreeData',
 				type: 'POST',
 				data: {
-					Id : v_id,
-					name : v_roleName,
+					roleId : v_roleId
+				},
+				dataType: 'json',
+				success: function(resp){
+					var status = resp.status;
+					if(status == '00'){
+						var datas = resp.data;
+						$.fn.zTree.init($("#treeDemo"), setting, datas);
+						setCheck();
+					}
+				},
+				error: function(a, b, c){
+					alert(a+"--"+b+"--"+c);
+				}
+			});
+        }
+        
+        function do_chooseRole(){
+        	var aaa = $(window.frames["roleFrameTest"].document).find("#table_query_role");
+        	var rowid = aaa.jqGrid("getGridParam","selrow");
+        	var rowData = aaa.jqGrid('getRowData',rowid);//获取该行数据
+        	roleId = rowData.id;
+        	roleName = rowData.name;
+        	$("#auth_roleName").val(roleName);
+        	initFuncTreeData(roleId);
+        }
+        
+        /**
+         * 角色--功能权限配置
+         */
+        function configRoleMenu(){
+        	var roleMenuTree = $.fn.zTree.getZTreeObj("treeDemo");
+        	var checkedNodes = roleMenuTree.getCheckedNodes(true);//复选框
+        	var selectedNodes = roleMenuTree.getSelectedNodes();//光标选中
+            var menuIds = "";
+            for(var i=0;i<checkedNodes.length;i++){
+            	if(!isEmpty(checkedNodes[i].id)){
+	            	menuIds += checkedNodes[i].id+",";
+            	}
+            }
+            menuIds = menuIds.substr(0,menuIds.length-1);
+			console.log("节点id:"+menuIds); //获取选中节点的值
+
+        	if(isEmpty(roleId)){
+        		$.Pop("还未选择角色，不能配置功能！", "alert", function(){});
+        		return false;
+        	}
+        	$.ajax({
+				url: '/funcAuth/saveRoleMenuRel',
+				type: 'POST',
+				data: {
+					roleId : roleId,
+					menuIds : menuIds,
 				},
 				dataType: 'json',
 				success: function(resp){
@@ -270,7 +204,6 @@
 					if(status == '00'){
 						toastr.success('保存成功22!', '提示！');
 						$.Pop("保存成功111", 'alert', function(){});
-						reloadGridData('table_list_2');
 					}else{
 						var message = resp.message;
 						$.Pop(message, 'alert', function(){});
@@ -280,44 +213,6 @@
 					alert(a+"--"+b+"--"+c);
 				}
 			});
-        }
-        
-        //选择下拉框
-        var config = {
-            '.chosen-select'           : {},
-            '.chosen-select-deselect'  : {allow_single_deselect:true},
-            '.chosen-select-no-single' : {disable_search_threshold:10},
-            '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
-            '.chosen-select-width'     : {width:"95%"}
-        }
-        for (var selector in config) {
-            $(selector).chosen(config[selector]);
-        }
-        
-        //条件搜索功能
-        function do_searchTreerole(){
-        	var sch_roleName = $('#sch_roleName').val();
-        	var sch_roleLevel = $('#sch_roleLevel').val();
-        	var sch_leafFlag = $('#sch_leafFlag option:selected').val();
-        	var postData = {
-       			name : sch_roleName,
-           		treeLevel : sch_roleLevel,
-           		leafFlag : sch_leafFlag
-        	};
-        	var params = {
-        		postData : postData
-        	}
-        	reloadGridData('table_list_2', params);
-        }
-        
-        function do_reset(){
-        	//$("#sch_roleForm").resetForm();
-        	$("#sch_roleForm")[0].reset();
-        }
-        
-        //打开 角放大镜
-        function openRolePanel(){
-        	
         }
         
     </script>

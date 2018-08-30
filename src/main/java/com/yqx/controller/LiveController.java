@@ -13,9 +13,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.yqx.model.AuthRole;
 import com.yqx.model.LiveAnchor;
 import com.yqx.model.TreeMenu;
 import com.yqx.service.LiveService;
+import com.yqx.service.RoleService;
 import com.yqx.util.ProjConstants;
 
 /**
@@ -31,6 +33,9 @@ public class LiveController{
 	
 	@Autowired	
 	private LiveService liveService;
+	
+	@Autowired
+	private RoleService roleService;
 
 	@RequestMapping(value="/doLogin")
 	@ResponseBody
@@ -46,8 +51,11 @@ public class LiveController{
 			return map;
 		}
 		boolean flag = liveService.validateLogin(reqMap);
+		Long userId = Long.parseLong(userName);
+		AuthRole authRole = roleService.getAuthRoleById(userId);
 		if(flag){
 			map.put("status", ProjConstants.SUCCESS_FLAG);
+			map.put("data", authRole);
 		}else{
 			map.put("error", "登录用户名或密码错误！");
 		}
@@ -88,7 +96,6 @@ public class LiveController{
 		log.debug("*************  live!getUserInfo  *********************");
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("status", ProjConstants.ERROR_FLAG);
-		Map<String, Object> reqMap = new HashMap<String, Object>();
 		if(StringUtils.isBlank(userId)){
 			map.put("error", "请求参数为空！");
 			return map;
@@ -121,7 +128,7 @@ public class LiveController{
 	
 	@RequestMapping(value="/getMenuByLevel")
 	@ResponseBody
-	public Map<String, Object> getMenuByLevel(String level,String parentId) throws Exception{
+	public Map<String, Object> getMenuByLevel(String level, String parentId) throws Exception{
 		log.debug("*************  live!getMenuByLevel  *********************");
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("status", ProjConstants.ERROR_FLAG);
@@ -172,6 +179,29 @@ public class LiveController{
 //		map.put("total", totalPage);
 //		map.put("records", treeMap.get("count"));
 //		map.put("rows", treeMap.get("data"));
+		return map;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value="/getTreeByAuthRole")
+	@ResponseBody
+	public Map<String, Object> getTreeByAuthRole(String roleId) throws Exception{
+		log.debug("*************  live!getTreeByAuthRole  *********************");
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("status", ProjConstants.ERROR_FLAG);
+		if(StringUtils.isBlank(roleId)){
+			map.put("error", "请求参数为空！");
+			return map;
+		}
+		try {
+			Map<String, Object> returnMap = liveService.findTreeMenuByAuthRole(roleId);
+			map.put("status", ProjConstants.SUCCESS_FLAG);
+			List<Map<String, Object>> treeMap = (List<Map<String, Object>>) returnMap.get("data");
+			map.put("data", treeMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+			map.put("error", "获取菜单树异常！");
+		}
 		return map;
 	}
 	

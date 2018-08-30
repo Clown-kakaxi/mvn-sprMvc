@@ -48,4 +48,11 @@ public interface LiveService {
 	
 	Map<String, Object> getAllTreeMenu(int rows, int page) throws SQLException;
 	
+	/**
+	 * 根据【角色ID】值获取所有菜单元素值
+	 * @param roleId
+	 * @return
+	 */
+	Map<String, Object> findTreeMenuByAuthRole(String roleId) throws Exception;
+	
 }

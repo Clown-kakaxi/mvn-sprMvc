@@ -218,6 +218,8 @@
 
 
     <script>
+    	var v_userId;
+    	var v_roleId;
         $(document).ready(function() {
         	var windowHeight = document.body.clientHeight;
         	var frameHeight = windowHeight-120;
@@ -233,7 +235,8 @@
                 toastr.success('Responsive Admin Theme', 'Welcome to INSPINIA');
 
             }, 1300);
-			
+            v_userId = window.localStorage.getItem('userId_');
+            v_roleId = window.localStorage.getItem('roleId_');
             initData();
             
         });
@@ -243,7 +246,8 @@
          */
         function initData(){
           	getUserInfo();
-          	getMenuByLevel();
+          	//getMenuByLevel();
+          	getTreeByAuthRole();
 //      	aaaaaa();
         }
         
@@ -298,7 +302,7 @@
 				type: 'POST',
 				data: {
 					level : level,
-					parentId : parentId
+					parentId : parentId,
 				},
 				dataType: 'json',
 				success: function(resp){
@@ -393,7 +397,7 @@
          * 获取用户信息
          */
         function getUserInfo(){
-        	var userId = window.localStorage.getItem('userId');
+        	var userId = window.localStorage.getItem('userId_');
         	if(!isEmpty(userId)){
         		$.ajax({
 					url: '/live/getUserInfo',
@@ -423,6 +427,70 @@
 				});
         	}
         }
+        
+        //根据角色获取菜单数目录
+        function getTreeByAuthRole(){
+        	v_roleId = '10000';
+        	$.ajax({
+				url: '/live/getTreeByAuthRole',
+				type: 'POST',
+				data: {
+					roleId : v_roleId
+				},
+				dataType: 'json',
+				success: function(resp){
+					console.log(resp);
+					var status = resp.status;
+					if(status == '00'){
+						var menu = document.getElementById('side-menu');//左侧menu菜单栏
+						var data = resp.data;
+						
+						if(data.length >0){
+							var iconNum = 0;
+							for(var i=0; i<data.length;i++){
+								var li = document.createElement('li');
+								if(i == 0){
+									li.className = 'active menuLi';
+								}else{
+									li.className = 'menuLi';
+								}
+								if(iconNum >= menu_icons.length){
+									iconNum = 0;
+								}
+								li.setAttribute('data-url',''+data[i].mocFuncId+'');
+								var _html = '';
+								_html += '<a class="isLeaf" href="#"><i class="'+menu_icons[iconNum]+'"></i> <span class="nav-label">'+data[i].name+'</span>';
+								var leafFlag = data[i].leafFlag;
+								_html += '</a></li>';
+								
+								li.innerHTML = _html;
+								menu.appendChild(li);
+								
+								/**
+								 * 添加菜单点击事件
+								 */
+								$('#side-menu').off('click','.menuLi');
+								$('#side-menu').on('click','.menuLi',function(event){
+									$('.menuLi').removeClass('active');//移除所有active效果
+									$(this).addClass('active');
+									var subUrl = this.getAttribute('data-url');
+									showSubPage('iframe-page-content', subUrl);
+								});
+								iconNum++;
+								
+								
+							}
+						}
+					}else{
+						$.Pop('网络连接出错或服务端未开启!','alert',function(){});
+					}
+				},
+				error: function(a, b, c){
+					alert(JSON.parse(a)+"--"+b+"--"+c);
+				}
+			});
+        }
+        
         
     </script>
     <script>

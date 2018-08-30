@@ -17,4 +17,11 @@ public interface RoleService{
 	void deleteRole(String ids) throws Exception;
 	
 	void updateRole(AuthRole authRole, Long id);
+	
+	/**
+	 * 根据 【用户id】 获取角色信息
+	 */
+	AuthRole getAuthRoleById(Long roleId);
+	
+	void saveRoleUserRel(String roleId, String userIds);
 }
